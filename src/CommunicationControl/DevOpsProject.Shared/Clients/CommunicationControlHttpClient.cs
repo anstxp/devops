@@ -1,4 +1,4 @@
-﻿using DevOpsProject.Shared.Models;
+﻿using DevOpsProject.Shared.Models.HiveMindCommands;
 using System.Text;
 using System.Text.Json;
 
@@ -13,7 +13,7 @@ namespace DevOpsProject.Shared.Clients
             _httpClient = httpClient;
         }
 
-        public async Task<string> SendHiveControlCommandAsync(string scheme, string ip, int port, string path, MoveHiveMindCommand command)
+        public async Task<string> SendHiveControlCommandAsync(string scheme, string ip, int port, string path, HiveMindCommand command)
         {
             var uriBuilder = new UriBuilder
             {

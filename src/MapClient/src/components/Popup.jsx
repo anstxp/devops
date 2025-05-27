@@ -1,6 +1,6 @@
 import React from "react";
 
-const Popup = ({ isVisible, coords, onConfirm, onCancel }) => {
+const Popup = ({ isVisible, coords, onConfirm, onCancel, onStopMove }) => {
     if (!isVisible || !coords) return null;
 
     // Copy coordinates to clipboard
@@ -38,12 +38,20 @@ const Popup = ({ isVisible, coords, onConfirm, onCancel }) => {
                 <h3>Move all hives to:</h3>
                 <p>Lat: {coords.lat} | Lon: {coords.lon}</p>
 
-                {/* Copy Coordinates Button */}
-                <button onClick={copyCoordinates} style={{ marginBottom: "10px", display: "block", width: "100%" }}>Copy Coordinates</button>
+                <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr 1fr', gap: '5px'}}>
+                    {/* Copy Coordinates Button */}
+                    <button onClick={copyCoordinates} style={{ marginBottom: "10px", height: '25px', display: "block", width: "100%" }}>Copy Coordinates</button>
 
-                {/* Move Hives & Cancel Buttons */}
-                <button onClick={() => onConfirm(coords)} style={{ marginRight: "10px" }}>Move Hives</button>
-                <button onClick={onCancel}>Cancel</button>
+                    {/* Move Hives & Cancel Buttons - moved to a separate row */}
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+                        <button onClick={() => onConfirm(coords)} style={{ marginRight: "10px", height: '25px', }}>Move Hives</button>
+                        <button onClick={() => onStopMove()} style={{ height: '25px'}} >Stop Hives</button>
+                    </div>
+
+                    <button onClick={onCancel} style={{ height: '25px'}}>Cancel</button>
+                </div>
+
+                
             </div>
         </div>
     );

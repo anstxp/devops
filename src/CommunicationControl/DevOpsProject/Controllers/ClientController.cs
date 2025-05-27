@@ -82,5 +82,31 @@ namespace DevOpsProject.CommunicationControl.API.Controllers
 
             return Accepted("Hives are being moved asynchronously.");
         }
+
+        [HttpPost("hive/stop")]
+        public IActionResult SendBulkHiveStopSignal(StopHivesMovementRequest request)
+        {
+            if (request?.Hives == null || !request.Hives.Any())
+                return BadRequest("No hive IDs provided.");
+
+            _logger.LogInformation("Hive stop moving request accepted by enpdoint. Request: {@request}", request);
+            foreach (var id in request.Hives)
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _communicationControlService.SendHiveStopSignal(id);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send control stop signal for HiveID: {id} \n Request: {@request}", id, request);
+                    }
+                });
+            }
+
+
+            return Accepted("Hives movement is being stopped asynchronously.");
+        }
     }
 }

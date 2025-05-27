@@ -46,3 +46,16 @@ export const moveHives = async (apiUrl, lat, lon, ids) => {
         throw error;
     }
 };
+
+export const stopHiveMove = async (apiUrl, ids) => {
+    try {
+        await axios.post(`${apiUrl}/hive/stop`, {
+            Hives: ids
+        });
+        console.log(`Stop hive move signal sent`);
+    }
+    catch (error) {
+        console.error("Error stopping hive movement:", error);
+        throw error;
+    }
+}

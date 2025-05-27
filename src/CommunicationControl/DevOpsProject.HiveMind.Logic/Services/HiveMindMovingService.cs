@@ -47,6 +47,28 @@ namespace DevOpsProject.HiveMind.Logic.Services
             }
         }
 
+        public void StopHiveMindMoving(bool immediateStop)
+        {
+            lock (typeof(HiveInMemoryState))
+            {
+                if (HiveInMemoryState.OperationalArea == null || HiveInMemoryState.CurrentLocation == null)
+                {
+                    _logger.LogWarning("Cannot stop moving: OperationalArea or CurrentLocation is not set.");
+                    return;
+                }
+
+                if (!HiveInMemoryState.IsMoving)
+                {
+                    _logger.LogWarning("Hive mind already stopped moving. Previous destination: {@destination}, Current Location: {@current}", HiveInMemoryState.Destination, HiveInMemoryState.CurrentLocation);
+                    return;
+                }
+
+                _logger.LogInformation("Hive mind stopped moving. Current location: {@currentLocation}, Destination: {@destination}", HiveInMemoryState.CurrentLocation, 
+                    HiveInMemoryState.Destination);
+                StopMovement();
+            }
+        }
+
         private void UpdateMovement(object state)
         {
             lock (typeof(HiveInMemoryState))

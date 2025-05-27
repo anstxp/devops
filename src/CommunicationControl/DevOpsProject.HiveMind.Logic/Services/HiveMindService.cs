@@ -123,7 +123,7 @@ namespace DevOpsProject.HiveMind.Logic.Services
                     // TODO: MOCKED FOR NOW
                     Height = 5,
                     Speed = 15,
-                    State = Shared.Enums.State.Move
+                    State = Shared.Enums.HiveMindState.Move
                 };
 
                 var connectResult = await _httpClient.SendCommunicationControlTelemetryAsync(_communicationConfigurationOptions.RequestSchema,
@@ -134,7 +134,6 @@ namespace DevOpsProject.HiveMind.Logic.Services
 
                 if (connectResult != null)
                 {
-                    // TODO: Store timestamp
                     var hiveConnectResponse = JsonSerializer.Deserialize<HiveTelemetryResponse>(connectResult);
                 }
                 else

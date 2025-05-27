@@ -10,7 +10,7 @@ import { Point } from "ol/geom";
 import { Feature } from "ol";
 import { Style, Icon, Text, Fill, Stroke } from "ol/style";
 import Popup from "./Popup";
-import { fetchCenterCoordinates, fetchHives, moveHives } from "../api/mapService";
+import { fetchCenterCoordinates, fetchHives, moveHives, stopHiveMove } from "../api/mapService";
 
 // TEST STAGING
 
@@ -182,7 +182,8 @@ const MapView = () => {
                 isVisible={popup.visible} 
                 coords={popup.coords} 
                 onConfirm={() => moveHives(apiUrl.current, popup.coords.lat, popup.coords.lon, hives.map(h => h.id))} 
-                onCancel={() => setPopup({ visible: false })} 
+                onCancel={() => setPopup({ visible: false })}
+                onStopMove={() => stopHiveMove(apiUrl.current, hives.map(h => h.id))}
             />
         </div>
     );

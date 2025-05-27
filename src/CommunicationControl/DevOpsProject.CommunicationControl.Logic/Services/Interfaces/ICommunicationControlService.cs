@@ -11,5 +11,6 @@ namespace DevOpsProject.CommunicationControl.Logic.Services.Interfaces
         Task<bool> IsHiveConnected(string hiveId);
         Task<DateTime> AddTelemetry(HiveTelemetryModel model);
         Task<string> SendHiveControlSignal(string hiveId, Location destination);
+        Task<string> SendHiveStopSignal(string hiveId);
     }
 }
