@@ -60,10 +60,10 @@ docker-map-client:
 
 deploy_dev:
   stage: deploy
-  image: bitnami/kubectl
+  image: lachlanevenson/k8s-kubectl:v1.27.1
   script:
     - export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID};
-    - echo "$CERTIFICATE_AUTHORITY_DATA" | base64 -d > /tmp/ca.crt
+    - echo "$CERTIFICATE_AUTHORITY_DATA" | base64 -d > /tmp/ca.crt;
     - kubectl config set-cluster gitlab-cluster \
       --server="$DEV_KUB_SERVER" \
       --certificate-authority=/tmp/ca.crt \
