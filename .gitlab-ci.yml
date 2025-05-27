@@ -60,12 +60,19 @@ docker-map-client:
 
 deploy_dev:
   stage: deploy
-  image: dtzar/helm-kubectl
+  image: bitnami/kubectl
   script:
-    - echo "${CERTIFICATE_AUTHORITY_DATA}" > /tmp/ca.crt
-    - kubectl config set-cluster k8s --server="${DEV_KUB_SERVER}" --certificate-authority=/tmp/ca.crt
-    - kubectl config set-credentials gitlab --token="${DEV_KUB_USER_TOKEN}"
-    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID};
+    - echo "$CERTIFICATE_AUTHORITY_DATA" | base64 -d > /tmp/ca.crt
+    - kubectl config set-cluster gitlab-cluster \
+      --server="$DEV_KUB_SERVER" \
+      --certificate-authority=/tmp/ca.crt \
+      --embed-certs=true
+    - kubectl config set-credentials gitlab-user --token="$DEV_KUB_USER_TOKEN"
+    - kubectl config set-context gitlab-context \
+      --cluster=gitlab-cluster \
+      --user=gitlab-user
+    - kubectl config use-context gitlab-context
     - kubectl set image deployment/com-control com-control=registry.gitlab.com/kzotkin/hiveemulator/communication-control:cicd
     - kubectl set image deployment/map-client map-client=${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG}
   when: manual
