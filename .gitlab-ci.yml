@@ -29,6 +29,8 @@ docker-com-control:
   image: docker:latest
   services:
     - docker:dind
+  needs:
+    - build-map-client
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
@@ -52,6 +54,8 @@ docker-map-client:
   image: docker:latest
   services:
     - docker:dind
+  needs:
+    - build-map-client
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
@@ -75,7 +79,7 @@ deploy_dev:
   image: dtzar/helm-kubectl
   script:
     - kubectl config set-cluster k8s --server="${DEV_KUB_SERVER}"
-    - kubectl config set clusters.k8s.certificate-authority-data ${CERTIFICATE_AUTHORITY_DATA}
+    - kubectl config set-cluster k8s --certificate-authority-data=${CERTIFICATE_AUTHORITY_DATA}
     - kubectl config set-credentials gitlab --token="${DEV_KUB_USER_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab
     - kubectl config use-context default
