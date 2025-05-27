@@ -79,7 +79,8 @@ deploy_dev:
   image: dtzar/helm-kubectl
   script:
     - kubectl config set-cluster k8s --server="${DEV_KUB_SERVER}"
-    - kubectl config set-cluster k8s --certificate-authority-data=${CERTIFICATE_AUTHORITY_DATA}
+    - echo "${CERTIFICATE_AUTHORITY_DATA}" > /tmp/ca.crt
+    - kubectl config set-cluster k8s --certificate-authority=/tmp/ca.crt
     - kubectl config set-credentials gitlab --token="${DEV_KUB_USER_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab
     - kubectl config use-context default
