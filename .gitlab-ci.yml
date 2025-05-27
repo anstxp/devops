@@ -59,14 +59,17 @@ docker-map-client:
     - docker logout ${CI_REGISTRY}
 
 deploy_dev:
-  stage: deploy
+  stage: build
   image: dtzar/helm-kubectl
   script:
-    - echo "$CERTIFICATE_AUTHORITY_DATA" | base64 -d > /tmp/ca.crt
-    - kubectl config set-cluster gitlab-cluster --server="$DEV_KUB_SERVER" --certificate-authority=/tmp/ca.crt --embed-certs=true
-    - kubectl config set-credentials gitlab-user --token="$DEV_KUB_USER_TOKEN"
+    - echo $CERTIFICATE_AUTHORITY_DATA | base64 -d > /tmp/ca.crt
+    - kubectl config set-cluster gitlab-cluster --server=$DEV_KUB_SERVER --certificate-authority=/tmp/ca.crt --embed-certs=true
+    - kubectl config set-credentials gitlab-user --token=$DEV_KUB_USER_TOKEN
     - kubectl config set-context gitlab-context --cluster=gitlab-cluster --user=gitlab-user
     - kubectl config use-context gitlab-context
+    - echo $DEV_KUB_SERVER
+    - echo $DEV_KUB_USER_TOKEN
+    - echo $CERTIFICATE_AUTHORITY_DATA
     - kubectl set image deployment/com-control com-control=registry.gitlab.com/kzotkin/hiveemulator/communication-control:1.0.${CI_PIPELINE_IID}
+    - kubectl --token=$DEV_KUB_USER_TOKEN get pods
     - kubectl set image deployment/map-client map-client=${CI_REGISTRY}/kzotkin/hiveemulator/map-client:1.0.${CI_PIPELINE_IID}
-  when: manual
