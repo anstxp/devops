@@ -13,6 +13,17 @@ build:
     paths:
       - src/CommunicationControl/published
 
+build-map-client:
+  stage: build
+  image: node:latest
+  script:
+    - cd src/MapClient
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - src/MapClient/dist
+
 docker-com-control:
   stage: docker
   image: docker:latest
@@ -51,11 +62,9 @@ docker-map-client:
       then
       export DOCKER_IMAGE_TAG=["CI_COMMIT_TAG"];
       else
-      ex  port DOCKER_IMAGE_TAG=${CI_COMMIT_REF_NAME};
+      export DOCKER_IMAGE_TAG=${CI_COMMIT_REF_NAME};
       fi
     - cd src/MapClient
-    - npm install
-    - npm run build
     - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG} .
     - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG}
   after_script:
@@ -74,5 +83,3 @@ deploy_dev:
     - kubectl rollout restart deployment/notifications-service
     - kubectl rollout restart deployment/workers
   when: manual
-  only:
-    - current
