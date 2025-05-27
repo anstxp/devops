@@ -30,7 +30,7 @@ docker-com-control:
   services:
     - docker:dind
   needs:
-    - build-map-client
+    - build
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
