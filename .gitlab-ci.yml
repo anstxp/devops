@@ -44,10 +44,6 @@ docker-map-client:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd src/MapClient
-    - npm install
-    - npm run build
-
     - if [ "${CI_COMMIT_REF_NAME}" = "main" ];
       then
       export DOCKER_IMAGE_TAG=latest;
@@ -55,9 +51,11 @@ docker-map-client:
       then
       export DOCKER_IMAGE_TAG=["CI_COMMIT_TAG"];
       else
-      export DOCKER_IMAGE_TAG=${CI_COMMIT_REF_NAME};
+      ex  port DOCKER_IMAGE_TAG=${CI_COMMIT_REF_NAME};
       fi
-
+    - cd src/MapClient
+    - npm install
+    - npm run build
     - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG} .
     - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG}
   after_script:
