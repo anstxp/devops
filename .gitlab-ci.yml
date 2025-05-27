@@ -34,15 +34,7 @@ docker-com-control:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - if [ "${CI_COMMIT_REF_NAME}" = "main" ];
-      then
-      export DOCKER_IMAGE_TAG=latest;
-      elif [-v "${CI_COMMIT_TAG}"];
-      then
-      export DOCKER_IMAGE_TAG=["CI_COMMIT_TAG"];
-      else
-      export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID}-${CI_BUILD_REF_NAME};
-      fi
+    - export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID}-${CI_BUILD_REF_NAME};
     - cd src/CommunicationControl
     - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG} -f  DevOpsProject/Dockerfile .
     - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG}
@@ -59,15 +51,7 @@ docker-map-client:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - if [ "${CI_COMMIT_REF_NAME}" = "main" ];
-      then
-      export DOCKER_IMAGE_TAG=latest;
-      elif [-v "${CI_COMMIT_TAG}"];
-      then
-      export DOCKER_IMAGE_TAG=["CI_COMMIT_TAG"];
-      else
-      export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID}-${CI_BUILD_REF_NAME};
-      fi
+    - export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID}-${CI_BUILD_REF_NAME};
     - cd src/MapClient
     - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG} .
     - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG}
@@ -83,7 +67,6 @@ deploy_dev:
     - kubectl config set-cluster k8s --certificate-authority=/tmp/ca.crt
     - kubectl config set-credentials gitlab --token="${DEV_KUB_USER_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab
-    - kubectl config use-context default
     - kubectl set image deployment/com-control com-control=registry.gitlab.com/kzotkin/hiveemulator/communication-control:cicd
     - kubectl set image deployment/map-client map-client=${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG}
   when: manual
