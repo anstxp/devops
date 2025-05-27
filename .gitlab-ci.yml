@@ -33,5 +33,5 @@ docker:
       export DOCKER_IMAGE_TAG=${CI_COMMIT_REF_NAME};
       fi
     - cd src/CommunicationControl
-    - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG} -f  /DevOpsProject/Dockerfile .
+    - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG} -f  DevOpsProject/Dockerfile .
     - docker push $IMAGE_TAG
