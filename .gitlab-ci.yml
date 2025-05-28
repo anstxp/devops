@@ -12,11 +12,24 @@ build:
     paths:
       - src/CommunicationControl/published
 
+build-map-client:
+  stage: build
+  image: node:latest
+  script:
+    - cd src/MapClient
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - src/MapClient/dist
+
 docker-com-control:
   stage: docker
   image: docker:latest
   services:
     - docker:dind
+  needs:
+    - build
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
@@ -24,5 +37,22 @@ docker-com-control:
     - cd src/CommunicationControl
     - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG} -f  DevOpsProject/Dockerfile .
     - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG}
+  after_script:
+    - docker logout ${CI_REGISTRY}
+
+docker-map-client:
+  stage: docker
+  image: docker:latest
+  services:
+    - docker:dind
+  needs:
+    - build-map-client
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID};
+    - cd src/MapClient
+    - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG} .
+    - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/map-client:${DOCKER_IMAGE_TAG}
   after_script:
     - docker logout ${CI_REGISTRY}
