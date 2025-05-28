@@ -1,5 +1,6 @@
 stages:
   - build
+  - docker
 
 build:
   stage: build
@@ -10,3 +11,18 @@ build:
   artifacts:
     paths:
       - src/CommunicationControl/published
+
+docker-com-control:
+  stage: docker
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - export DOCKER_IMAGE_TAG=1.0.${CI_PIPELINE_IID};
+    - cd src/CommunicationControl
+    - docker build -t ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG} -f  DevOpsProject/Dockerfile .
+    - docker push ${CI_REGISTRY}/kzotkin/hiveemulator/communication-control:${DOCKER_IMAGE_TAG}
+  after_script:
+    - docker logout ${CI_REGISTRY}
