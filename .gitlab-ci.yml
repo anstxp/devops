@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  script:
+    - cd src/CommunicationControl
+    - dotnet publish -c Release -p:PublishProfile=FolderProfile -o ./published DevOpsProject/DevOpsProject.CommunicationControl.API.csproj
+  artifacts:
+    paths:
+      - src/CommunicationControl/published
